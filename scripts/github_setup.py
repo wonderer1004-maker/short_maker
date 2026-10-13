@@ -1,0 +1,19 @@
+import json, os
+from pathlib import Path
+root=Path(__file__).resolve().parents[1]
+raw=os.environ.get('YOUTUBE_TOKEN_JSON','')
+channel=os.environ.get('YOUTUBE_CHANNEL_ID','')
+if not raw or not channel:raise SystemExit('GitHub Secrets에 OAuth token JSON과 채널 ID를 입력하세요.')
+token=json.loads(raw)
+if not token.get('refresh_token'):raise SystemExit('갱신 가능한 OAuth 토큰이 필요합니다.')
+(root/'token.json').write_text(json.dumps(token),encoding='utf-8')
+(root/'token.json').chmod(0o600)
+(root/'data').mkdir(exist_ok=True)
+(root/'data/channel.json').write_text(json.dumps({'id':channel,'title':'GitHub 연결 채널'}),encoding='utf-8')
+c=json.loads((root/'config.example.json').read_text(encoding='utf-8'))
+mode=os.environ.get('PUBLICATION_MODE') or 'private'
+if mode not in ('private','scheduled'):raise SystemExit('PUBLICATION_MODE must be private or scheduled')
+c['mode']=mode
+c['require_review']=False
+(root/'config.json').write_text(json.dumps(c,ensure_ascii=False),encoding='utf-8')
+print('연결 설정 완료. 기본 비공개 업로드. 토큰 내용은 출력하지 않습니다.')

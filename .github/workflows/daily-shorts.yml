@@ -1,0 +1,61 @@
+name: Daily original Shorts
+on:
+  schedule:
+    - cron: '17 22 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: shorts-production
+  cancel-in-progress: false
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Require private repository
+        env:
+          IS_PRIVATE: ${{ github.event.repository.private }}
+        run: test "$IS_PRIVATE" = true
+      - name: Install
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install -r requirements.txt
+          python scripts/install_font.py
+      - name: Connect secrets and settings
+        env:
+          YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          PUBLICATION_MODE: ${{ vars.PUBLICATION_MODE }}
+        run: python scripts/github_setup.py
+      - name: Configure durable checkpoints
+        run: |
+          git config user.name shorts-studio-bot
+          git config user.email shorts-studio-bot@users.noreply.github.com
+      - name: Generate and upload
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SHORTS_CHECKPOINT: '1'
+        run: python app.py run
+      - name: Save final state
+        if: always()
+        run: python scripts/checkpoint.py
+      - name: Save videos for download
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shorts-${{ github.run_id }}
+          path: |
+            output/
+            data/performance.csv
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Remove credential files
+        if: always()
+        run: rm -f token.json client_secret.json .env
