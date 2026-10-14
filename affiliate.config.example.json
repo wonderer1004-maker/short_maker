@@ -1,0 +1,643 @@
+{
+  "content_mode": "affiliate",
+  "daily_videos": 6,
+  "publish_hours_kst": [
+    11,
+    12,
+    15,
+    18,
+    20,
+    21
+  ],
+  "max_ai_requests_daily": 48,
+  "channel_profile_cta": "상품 링크는 채널 프로필에서 확인하세요.",
+  "affiliate_platforms": {
+    "coupang": {
+      "enabled": true,
+      "category_id": "1016",
+      "label": "가전·디지털 카테고리 베스트",
+      "comparison_rules": [
+        {
+          "label": "무선 마우스",
+          "keyword": "무선 마우스",
+          "aliases": [
+            "무선 마우스",
+            "wireless mouse",
+            "무선 게이밍 마우스",
+            "무선 블루투스 마우스",
+            "wireless gaming mouse"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "무선 키보드",
+          "keyword": "무선 키보드",
+          "aliases": [
+            "무선 키보드",
+            "wireless keyboard"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "무선 이어폰",
+          "keyword": "무선 이어폰",
+          "aliases": [
+            "무선 이어폰",
+            "블루투스 이어폰",
+            "wireless earbuds"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "보조배터리",
+          "keyword": "보조배터리",
+          "aliases": [
+            "보조배터리",
+            "보조 배터리",
+            "power bank"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "충전기",
+          "keyword": "충전기",
+          "aliases": [
+            "충전기",
+            "wall charger"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "모니터",
+          "keyword": "모니터",
+          "aliases": [
+            "모니터",
+            "monitor"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "블루투스 스피커",
+          "keyword": "블루투스 스피커",
+          "aliases": [
+            "블루투스 스피커",
+            "bluetooth speaker"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "헤드폰",
+          "keyword": "헤드폰",
+          "aliases": [
+            "헤드폰",
+            "headphone"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "USB 허브",
+          "keyword": "USB 허브",
+          "aliases": [
+            "USB 허브",
+            "USB hub"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "웹캠",
+          "keyword": "웹캠",
+          "aliases": [
+            "웹캠",
+            "webcam"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "외장 SSD",
+          "keyword": "외장 SSD",
+          "aliases": [
+            "외장 SSD",
+            "external SSD"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "태블릿",
+          "keyword": "태블릿",
+          "aliases": [
+            "태블릿",
+            "tablet"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "노트북",
+          "keyword": "노트북",
+          "aliases": [
+            "노트북",
+            "laptop"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "스마트워치",
+          "keyword": "스마트워치",
+          "aliases": [
+            "스마트워치",
+            "smartwatch"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "공기청정기",
+          "keyword": "공기청정기",
+          "aliases": [
+            "공기청정기",
+            "air purifier"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "스마트폰",
+          "keyword": "스마트폰",
+          "aliases": [
+            "스마트폰",
+            "아이폰",
+            "smartphone"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "냉장고",
+          "keyword": "냉장고",
+          "aliases": [
+            "냉장고",
+            "refrigerator"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "세탁기",
+          "keyword": "세탁기",
+          "aliases": [
+            "세탁기",
+            "washing machine"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "청소기",
+          "keyword": "청소기",
+          "aliases": [
+            "청소기",
+            "vacuum cleaner"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "건조기",
+          "keyword": "건조기",
+          "aliases": [
+            "건조기",
+            "clothes dryer"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "전자레인지",
+          "keyword": "전자레인지",
+          "aliases": [
+            "전자레인지",
+            "microwave"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "헤어드라이어",
+          "keyword": "헤어드라이어",
+          "aliases": [
+            "헤어드라이어",
+            "헤어 드라이어",
+            "hair dryer"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "전기포트",
+          "keyword": "전기포트",
+          "aliases": [
+            "전기포트",
+            "전기 포트",
+            "electric kettle"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "TV",
+          "keyword": "TV",
+          "aliases": [
+            "텔레비전",
+            "텔레비젼",
+            "스마트 TV"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        },
+        {
+          "label": "건전지",
+          "keyword": "건전지",
+          "aliases": [
+            "건전지",
+            "AA 배터리",
+            "AAA 배터리"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        }
+      ]
+    },
+    "aliexpress": {
+      "enabled": true,
+      "category_id": "",
+      "keyword": "wireless mouse",
+      "label": "무선 마우스 검색 범위",
+      "comparison_rules": [
+        {
+          "label": "무선 마우스",
+          "keyword": "무선 마우스",
+          "aliases": [
+            "무선 마우스",
+            "wireless mouse",
+            "무선 게이밍 마우스",
+            "무선 블루투스 마우스",
+            "wireless gaming mouse"
+          ],
+          "exclude": [
+            "케이스",
+            "거치대",
+            "보호필름",
+            "파우치",
+            "케이블",
+            "리필",
+            "호환 부품",
+            "case",
+            "stand",
+            "cover",
+            "cable",
+            "replacement",
+            "screen protector"
+          ]
+        }
+      ]
+    }
+  },
+  "affiliate_portal_url": ""
+}

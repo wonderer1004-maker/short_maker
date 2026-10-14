@@ -24,6 +24,9 @@ def load_catalog():
     return entries
 
 def run_daily(c,store,skip_collect=False):
+    if c.get('content_mode')=='affiliate':
+        from affiliate import run_affiliate
+        return run_affiliate(c,store)
     if c.get('content_mode')=='popularity':
         from popularity import run_popularity
         return run_popularity(c,store)
@@ -87,6 +90,13 @@ def upload_ready(c,store):
     yt,_=service()
     for i,job in enumerate(ready,uploaded_today):
         script=json.loads(job['script']) if job.get('script') else {}
+        if '_affiliate' in script:
+            from affiliate import verify_portal
+            collected=dt.datetime.fromisoformat(script['_affiliate']['collected_at'])
+            if (now()-collected).total_seconds()>24*3600:
+                store.update(job['id'],status='rank_stale',error='상품 자료가 24시간을 넘었습니다.')
+                continue
+            verify_portal(c,script)
         if '_ranking' in script:
             updated=dt.datetime.fromisoformat(script['_ranking']['source_updated_at'])
             if (now()-updated).total_seconds()>c.get('ranking_max_age_hours',24)*3600:
@@ -96,7 +106,10 @@ def upload_ready(c,store):
             if os.environ.get('SHORTS_CHECKPOINT')!='1':
                 raise RuntimeError('완성 영상이 없습니다. 제작 파일을 복원하세요.')
             script=json.loads(job['script'])
-            if '_ranking' in script:
+            if '_affiliate' in script:
+                from comparison_render import render_comparison
+                path,_=render_comparison(c,store,job['id'],script)
+            elif '_ranking' in script:
                 from editorial import render_ranking
                 path,_=render_ranking(c,store,job['id'],script['_ranking'],script)
             else:
@@ -186,6 +199,10 @@ def doctor(c):
     for key in ('YOUTUBE_API_KEY','OPENAI_API_KEY'): print(key,'설정됨' if os.environ.get(key) else '미설정')
     print('OAuth JSON:',(ROOT/'client_secret.json').exists(),'채널 로그인:',(ROOT/'token.json').exists())
     print('실행 설정:',c['mode'],'검토:',c['require_review'],'일일 영상:',c['daily_videos'])
+    if c.get('content_mode')=='affiliate':
+        for key in ('COUPANG_ACCESS_KEY','COUPANG_SECRET_KEY','ALI_APP_KEY','ALI_APP_SECRET','ALI_TRACKING_ID','RENDER_DEPLOY_HOOK'):
+            print(key,'설정됨' if os.environ.get(key) else '미설정')
+        print('상품 링크 페이지:','설정됨' if c.get('affiliate_portal_url') else '미설정')
 
 def dashboard(c,port):
     csrf=secrets.token_urlsafe(32)
@@ -263,7 +280,7 @@ def dashboard(c,port):
             sample='<video controls preload="metadata" src="/video/demo/short.mp4"></video>' if (ROOT/'output/demo/short.mp4').exists() else ''
             content=f'''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>쇼츠 스튜디오</title>
             <style>body{{background:#0b1424;color:#eaf0ff;font:16px system-ui;margin:0}}main{{max-width:1120px;margin:auto;padding:28px}}h1{{font-size:36px}}h2{{font-size:22px}}small,.muted{{color:#a7bdd4}}.badge{{color:#60ecc4}}button{{background:#63e7c0;border:0;padding:13px 19px;border-radius:10px;font-weight:bold;cursor:pointer}}.buttons{{display:flex;gap:12px;flex-wrap:wrap}}article{{display:flex;gap:24px;background:#172339;padding:22px;border-radius:18px;margin:22px 0}}video{{width:190px;max-height:340px;border-radius:14px}}article>div{{flex:1}}p{{line-height:1.7}}a{{color:#a3d1ff}}.error{{color:#ffb7b7}}input{{display:block;max-width:130px;background:#243854;color:white;border:1px solid #3e5774;border-radius:6px;padding:8px}}.finance{{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-top:20px}}label{{font-size:12px}}table{{width:100%;border-collapse:collapse}}td,th{{text-align:left;padding:12px;border-bottom:1px solid #29405f}}pre{{white-space:pre-wrap;background:#172339;padding:15px}}@media(max-width:650px){{article{{display:block}}video{{width:100%;max-height:480px}}h1{{font-size:28px}}}}</style>
-            <main><small>ORIGINAL SHORTS WORKFLOW</small><h1>직장인의 쇼츠 스튜디오</h1><p class="badge">{'실제 상품 인기순위 수집' if c.get('content_mode')=='popularity' else '유튜브 후보 50개 분석'} → 하루 최대 {c['daily_videos']}개 새 영상 → {'비공개 업로드' if c['mode']=='private' else '예약 공개'} → 성과 기록</p>
+            <main><small>ORIGINAL SHORTS WORKFLOW</small><h1>직장인의 쇼츠 스튜디오</h1><p class="badge">{'쿠팡·알리 TOP10 및 동종 대안 수집' if c.get('content_mode')=='affiliate' else ('실제 상품 인기순위 수집' if c.get('content_mode')=='popularity' else '유튜브 후보 50개 분석')} → 하루 최대 {c['daily_videos']}개 새 영상 → {'비공개 업로드' if c['mode']=='private' else '예약 공개'} → 성과 기록</p>
             <p>채널: {esc(c['channel_name'])} · 검토 {'사용' if c['require_review'] else '생략'} · {'작업 실행 중' if running else '대기 중'}</p>
             <p class="muted">업로드 전 영상·사실·사용 권리를 확인하세요. 상품 태그와 관련 영상은 유튜브 스튜디오에서 연결합니다. 광고수익·구매 전환은 수동 입력입니다.</p>
             <div class="buttons">{buttons}</div><h2>제작 목록</h2>{cards or '<p>오늘 영상 제작을 누르세요. API 연결 전에는 아래 화면 샘플을 확인할 수 있습니다.</p>'}
@@ -309,7 +326,7 @@ def dashboard(c,port):
 
 def main():
     parser=argparse.ArgumentParser(description='원본 쇼츠 제작·예약 업로드 프로그램')
-    parser.add_argument('command',choices=['doctor','demo','ranking-preview','login','collect','run','upload','metrics','export','weekly','reconcile','dashboard','daemon'])
+    parser.add_argument('command',choices=['doctor','affiliate-setup','demo','ranking-preview','login','collect','run','upload','metrics','export','weekly','reconcile','dashboard','daemon'])
     parser.add_argument('--port',type=int,default=8765)
     parser.add_argument('--skip-collect',action='store_true')
     args=parser.parse_args();c=config();s=init_store()
@@ -330,6 +347,10 @@ def main():
     else:
         with run_lock():
             if args.command=='doctor':doctor(c)
+            elif args.command=='affiliate-setup':
+                c.update(json.loads((ROOT/'affiliate.config.example.json').read_text(encoding='utf-8')))
+                save_json(ROOT/'config.json',c)
+                print('쿠팡·알리 비교 설정을 적용했습니다. config.json의 범위·규칙·페이지 URL을 확인하세요.')
             elif args.command=='demo':demo(c,s)
             elif args.command=='ranking-preview':ranking_preview(c,s)
             elif args.command=='collect':collect(c)

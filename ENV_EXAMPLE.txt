@@ -1,3 +1,9 @@
 # 이 파일을 .env로 복사한 뒤 본인의 키를 입력합니다. GitHub에 올리지 마세요.
 YOUTUBE_API_KEY=여기에_유튜브_Data_API_키
 OPENAI_API_KEY=여기에_OpenAI_API_키
+COUPANG_ACCESS_KEY=쿠팡_파트너스_Access_Key
+COUPANG_SECRET_KEY=쿠팡_파트너스_Secret_Key
+ALI_APP_KEY=알리_제휴_API_App_Key
+ALI_APP_SECRET=알리_제휴_API_App_Secret
+ALI_TRACKING_ID=알리_Tracking_ID
+RENDER_DEPLOY_HOOK=Render_상품페이지_Deploy_Hook_URL

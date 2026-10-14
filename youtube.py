@@ -36,7 +36,20 @@ def service(login=False):
 
 def metadata(c,job,index):
     script=json.loads(job['script'])
-    if '_ranking' in script:
+    if '_affiliate' in script:
+        snap=script['_affiliate']
+        desc=(snap['disclosure']+'\n쿠팡 파트너스 또는 알리익스프레스 제휴 활동입니다.\n'
+              +snap['source']+' / '+snap['scope']+'\n'+snap['methodology']+'\n'
+              +'상품 자료 확인: '+snap['collected_at']+'\n'
+              +'판매처 자료 사진·표시가 비교 및 AI 합성 음성. 직접 성능 시험 결과가 아닙니다.\n'
+              +'옵션·쿠폰·배송비·세금·재고·가격은 구매 전에 확인하세요.\n'
+              +'클릭 가능한 상품 링크는 채널 프로필에서 확인하세요.\n'+c.get('affiliate_portal_url','')+'\n')
+        for pair in snap['pairs']:
+            for tag in ('popular','alternative'):
+                p=pair[tag]
+                desc+=f'{pair["rank"]}위 '+('인기 상품' if tag=='popular' else '동종 대안')+': '+p['name']+' / '+p['price']+'원\n'+p['affiliate_url']+'\n'
+        desc=desc[:4400]
+    elif '_ranking' in script:
         snap=script['_ranking']
         desc=(f'{snap["source"]} / {snap["category"]}\n순위 갱신: {snap["source_updated_at"]}\n'
               f'확인: {snap["collected_at"]}\n{snap["methodology"]}\n{snap["scope"]}\n'

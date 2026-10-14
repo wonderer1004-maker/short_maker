@@ -1,3 +1,7 @@
+# V4 우선 안내
+
+쿠팡·알리 자동 비교 기능은 [AFFILIATE_START.md](AFFILIATE_START.md)를 따르세요. GitHub 기본 모드 affiliate, 하루 최대 6편이며 별도의 Render 상품 링크 페이지를 연결합니다. 아래 내용은 이전 모드 설명입니다.
+
 # GitHub에서 실행하기
 
 ## V3 변경 사항 — 아래 구버전 안내보다 우선

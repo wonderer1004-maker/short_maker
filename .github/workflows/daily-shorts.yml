@@ -2,6 +2,7 @@ name: Daily original Shorts
 on:
   schedule:
     - cron: '17 22 * * *'
+    - cron: '17 23 * * *'
   workflow_dispatch:
     inputs:
       operation:
@@ -10,6 +11,7 @@ on:
         default: run
         options:
           - run
+          - upload
           - reconcile
           - metrics
 permissions:
@@ -42,6 +44,9 @@ jobs:
           YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
           PUBLICATION_MODE: ${{ vars.PUBLICATION_MODE }}
           SPEECH_PROVIDER: ${{ vars.SPEECH_PROVIDER }}
+          CONTENT_MODE: ${{ vars.CONTENT_MODE }}
+          AFFILIATE_CONFIG_JSON: ${{ vars.AFFILIATE_CONFIG_JSON }}
+          AFFILIATE_PORTAL_URL: ${{ vars.AFFILIATE_PORTAL_URL }}
         run: python scripts/github_setup.py
       - name: Configure durable checkpoints
         run: |
@@ -51,8 +56,14 @@ jobs:
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          COUPANG_ACCESS_KEY: ${{ secrets.COUPANG_ACCESS_KEY }}
+          COUPANG_SECRET_KEY: ${{ secrets.COUPANG_SECRET_KEY }}
+          ALI_APP_KEY: ${{ secrets.ALI_APP_KEY }}
+          ALI_APP_SECRET: ${{ secrets.ALI_APP_SECRET }}
+          ALI_TRACKING_ID: ${{ secrets.ALI_TRACKING_ID }}
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
           SHORTS_CHECKPOINT: '1'
-          OPERATION: ${{ github.event.inputs.operation || 'run' }}
+          OPERATION: ${{ github.event.inputs.operation || (github.event.schedule == '17 23 * * *' && 'upload' || 'run') }}
         run: python scripts/github_run.py
       - name: Save final state
         if: always()

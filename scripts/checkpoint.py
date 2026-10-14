@@ -6,8 +6,10 @@ def git(*args):
  if p.returncode:raise RuntimeError('상태 저장 실패. GitHub 쓰기 권한과 브랜치를 확인하세요.')
  return p.stdout
 p=root/'data/studio.sqlite3'
+if (root/'site/index.html').exists():
+ git('add','site/index.html')
 if p.exists():
  git('add','-f','data/studio.sqlite3')
- if git('diff','--cached','--name-only'):
-  git('commit','-m','Persist Shorts processing state [skip ci]')
-  git('push','origin','HEAD')
+if git('diff','--cached','--name-only'):
+ git('commit','-m','Persist Shorts processing state [skip ci]')
+ git('push','origin','HEAD')

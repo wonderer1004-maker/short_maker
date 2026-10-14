@@ -11,6 +11,12 @@ if not token.get('refresh_token'):raise SystemExit('갱신 가능한 OAuth 토�
 (root/'data').mkdir(exist_ok=True)
 (root/'data/channel.json').write_text(json.dumps({'id':channel,'title':'GitHub 연결 채널'}),encoding='utf-8')
 c=json.loads((root/'config.example.json').read_text(encoding='utf-8'))
+if (os.environ.get('CONTENT_MODE') or 'affiliate')=='affiliate':
+    c.update(json.loads((root/'affiliate.config.example.json').read_text(encoding='utf-8')))
+    if os.environ.get('AFFILIATE_CONFIG_JSON'):
+        supplied=json.loads(os.environ['AFFILIATE_CONFIG_JSON'])
+        c['affiliate_platforms']=supplied['affiliate_platforms']
+    c['affiliate_portal_url']=os.environ.get('AFFILIATE_PORTAL_URL','')
 mode=os.environ.get('PUBLICATION_MODE') or 'scheduled'
 if mode not in ('private','scheduled'):raise SystemExit('PUBLICATION_MODE must be private or scheduled')
 c['mode']=mode
