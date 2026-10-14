@@ -155,6 +155,8 @@ def collect(platform,c):
         if rule['keyword'] not in cache:cache[rule['keyword']]=adapter.search(rule['keyword'],c)
         a=choose_alternative(p,cache[rule['keyword']],rule)
         pairs.append({'rank':rank,'popular':dict(p),'alternative':dict(a),'type':rule['label']})
+        from comparison_facts import assessment
+        pairs[-1]['assessment']=assessment(pairs[-1])
     adapter.links([p for pair in pairs for p in (pair['popular'],pair['alternative'])])
     snap={'platform':platform,'source':adapter.name,'collected_at':now().isoformat(),
         'methodology':adapter.methodology,'scope':c.get('label','설정 카테고리'),
@@ -173,7 +175,10 @@ def make_script(snapshot,index,c):
     scenes=[{'narration':f'{snapshot["source"]} 인기 목록, {start+1}위부터 {end}위입니다. 제휴 링크 구매 시 수수료를 받을 수 있습니다.'}]
     for pair in snap['pairs']:
         p,a=pair['popular'],pair['alternative']
-        scenes.append({'narration':f'{pair["rank"]}위, {p["name"][:32]}. 표시 가격 {price(p)}. 같은 종류의 {a["name"][:32]}는 {price(a)}입니다. 옵션과 배송비는 구매 전에 확인하세요.'})
+        from comparison_facts import assessment,rank_label
+        comparison=pair.get('assessment') or assessment(pair)
+        pair['assessment']=comparison
+        scenes.append({'narration':f'{rank_label(snap["platform"],pair["rank"])}. {p["name"][:28]}, {price(p)}. 비교 제품 {a["name"][:28]}, {price(a)}. '+comparison['price_line']+' '+comparison['features'][0]+' 옵션과 배송비는 별도로 확인하세요.'})
     scenes.append({'narration':'성능 실험 결과가 아닌 판매처 자료 비교입니다. 상품 링크는 채널 프로필에서 확인하세요.'})
     return {'title':f'{snapshot["source"]} {snapshot["scope"]} 인기 {start+1}~{end}위 가격 비교'[:85],
             'scenes':scenes,'_affiliate':snap}
@@ -187,7 +192,10 @@ def portal(snapshots,c):
             for tag in ('popular','alternative'):
                 p=pair[tag];url=safe_url(p['affiliate_url'],['coupang.com','aliexpress.com'])
                 products.append('<div><b>'+('인기 상품' if tag=='popular' else '동종 대안')+'</b><p>'+html.escape(p['name'])+'</p><strong>'+price(p)+'</strong><p><a rel="sponsored noopener" target="_blank" href="'+html.escape(url,quote=True)+'">판매처에서 확인</a></p></div>')
-            cards.append('<article><h2>'+html.escape(snap['source'])+' '+str(pair['rank'])+'위 · '+html.escape(pair['type'])+'</h2><div class="pair">'+''.join(products)+'</div><small>'+html.escape(snap['collected_at'])+' 확인 · '+html.escape(snap['methodology'])+'</small></article>')
+            from comparison_facts import assessment,rank_label
+            comparison=pair.get('assessment') or assessment(pair)
+            result='<p>'+html.escape(comparison['price_line'])+'</p><p>'+html.escape(' / '.join(comparison['features']))+'</p>'
+            cards.append('<article><h2>'+html.escape(rank_label(snap['platform'],pair['rank']))+' · '+html.escape(pair['type'])+'</h2><div class="pair">'+''.join(products)+'</div>'+result+'<small>'+html.escape(snap['collected_at'])+' 확인 · '+html.escape(snap['methodology'])+'</small></article>')
     content='<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>오늘의 상품 비교</title><style>body{max-width:980px;margin:auto;padding:24px;background:#f7f4ee;color:#292c2e;font:17px/1.6 sans-serif}article{background:white;border-radius:24px;padding:24px;margin:24px 0}.pair{display:grid;grid-template-columns:1fr 1fr;gap:24px}a{display:inline-block;background:#667553;color:white;padding:12px 20px;border-radius:12px;text-decoration:none}small{color:#706b62}.notice{background:#ebe3d5;padding:20px;border-radius:16px}@media(max-width:600px){.pair{grid-template-columns:1fr}}</style><h1>오늘의 인기 상품 비교</h1><p class="notice">'+DISCLOSURE+' 쿠팡 파트너스 및 알리익스프레스 제휴 활동입니다.</p><p>판매처 표시 가격 비교입니다. 옵션·배송비·세금·쿠폰·가격·재고는 구매 전에 확인하세요. 직접 성능 시험 결과가 아닙니다.</p>'+''.join(cards)+'</html>'
     out=ROOT/'output/affiliate-links';out.mkdir(parents=True,exist_ok=True)
     (out/'index.html').write_text(content,encoding='utf-8')

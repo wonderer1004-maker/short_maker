@@ -1,0 +1,24 @@
+[
+  {
+    "model": "Logitech M240 Silent",
+    "model_pattern": "(?:로지텍|Logitech).*\\bM240\\b|\\bM240\\b.*(?:로지텍|Logitech)",
+    "exclude": ["business", "비즈니스", "세트", "케이스"],
+    "source_url": "https://www.logitech.com/ko-kr/shop/p/m240-silent-bluetooth-mouse.910-007123",
+    "checked_at": "2026-10-14",
+    "highlights": ["Bluetooth 연결", "컴팩트한 양손용 디자인"],
+    "metrics": {
+      "documented_connections": {"label": "공식 안내 연결 선택지", "value": 1, "unit": "가지", "basis": "제조사 안내", "better": "higher"}
+    }
+  },
+  {
+    "model": "Logitech M650",
+    "model_pattern": "(?:로지텍|Logitech).*\\bM650\\b|\\bM650\\b.*(?:로지텍|Logitech)",
+    "exclude": ["세트", "케이스", "business", "비즈니스"],
+    "source_url": "https://www.logitech.com/ko-kr/shop/p/m650-signature-wireless-mouse",
+    "checked_at": "2026-10-14",
+    "highlights": ["Bluetooth + Logi Bolt 연결", "SmartWheel 스크롤"],
+    "metrics": {
+      "documented_connections": {"label": "공식 안내 연결 선택지", "value": 2, "unit": "가지", "basis": "제조사 안내", "better": "higher"}
+    }
+  }
+]

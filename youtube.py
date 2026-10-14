@@ -45,6 +45,10 @@ def metadata(c,job,index):
               +'옵션·쿠폰·배송비·세금·재고·가격은 구매 전에 확인하세요.\n'
               +'클릭 가능한 상품 링크는 채널 프로필에서 확인하세요.\n'+c.get('affiliate_portal_url','')+'\n')
         for pair in snap['pairs']:
+            comparison=pair.get('assessment')
+            if comparison:
+                desc+=comparison['price_line']+'\n'+'\n'.join(comparison['features'])+'\n'
+                desc+='\n'.join(comparison['source_urls'])+'\n'
             for tag in ('popular','alternative'):
                 p=pair[tag]
                 desc+=f'{pair["rank"]}위 '+('인기 상품' if tag=='popular' else '동종 대안')+': '+p['name']+' / '+p['price']+'원\n'+p['affiliate_url']+'\n'

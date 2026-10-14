@@ -7,6 +7,7 @@ from core import ROOT
 from editorial import label,rank_speech,beat_music
 from render import command,duration
 from affiliate import DISCLOSURE,price,safe_url
+from comparison_facts import assessment,rank_label
 
 def photo(p,path,platform):
     if not path.exists():
@@ -23,15 +24,16 @@ def photo(p,path,platform):
 def card(c,snap,pair,dest,out):
     im=Image.new('RGB',(1080,1920),'#F7F4EE');d=ImageDraw.Draw(im)
     label(d,c,'THE COMPARISON EDIT',(70,130),30,'#8C6B54')
-    label(d,c,snap['source']+' · 인기 목록 비교',(70,220),55)
+    label(d,c,snap['source']+' · 순위와 가격·기능 비교',(70,220),51)
     d.rounded_rectangle((60,330,1020,445),radius=20,fill='#E9E1D4')
     label(d,c,DISCLOSURE,(80,366),34,width=920)
     if pair:
-        label(d,c,f'{pair["rank"]:02}  '+pair['type'],(70,480),76,'#667553')
+        comparison=pair.get('assessment') or assessment(pair)
+        label(d,c,rank_label(snap['platform'],pair['rank']),(70,480),55,'#667553')
         for index,tag in enumerate(('popular','alternative')):
             p=pair[tag];x=60+index*490
             d.rounded_rectangle((x,620,x+470,1505),radius=30,fill='white')
-            label(d,c,'인기 목록 '+str(pair['rank'])+'위' if tag=='popular' else '같은 종류 · 대안',(x+25,650),29,'#667553',width=420)
+            label(d,c,'순위 상품' if tag=='popular' else '같은 종류 · 비교 상품',(x+25,650),29,'#667553',width=420)
             image=photo(p,out/(tag+'_'+p['id']+'.jpg'),snap['platform'])
             image=ImageOps.contain(image,(420,530));im.paste(image,(x+235-image.width//2,735+(530-image.height)//2))
             d=ImageDraw.Draw(im)
@@ -39,7 +41,8 @@ def card(c,snap,pair,dest,out):
             text=p['name'];lines=[text[i:i+15] for i in range(0,min(len(text),45),15)]
             for n,line in enumerate(lines):label(d,c,line,(x+25,1290+n*45),30,width=420)
             label(d,c,price(p),(x+25,1440),44,'#8C6B54',width=420)
-        label(d,c,'표시가 비교 · 성능 우열은 확인하지 않음',(70,1550),34,width=940)
+        label(d,c,comparison['price_line'],(70,1530),37,'#8C6B54',width=940)
+        label(d,c,comparison['features'][0],(70,1590),29,'#667553',width=940)
     else:
         label(d,c,'오늘의 인기 상품',(70,630),80)
         label(d,c,'TOP 10 × 동종 대안',(70,780),68,'#667553')
