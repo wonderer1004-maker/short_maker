@@ -11,9 +11,11 @@ if not token.get('refresh_token'):raise SystemExit('갱신 가능한 OAuth 토�
 (root/'data').mkdir(exist_ok=True)
 (root/'data/channel.json').write_text(json.dumps({'id':channel,'title':'GitHub 연결 채널'}),encoding='utf-8')
 c=json.loads((root/'config.example.json').read_text(encoding='utf-8'))
-mode=os.environ.get('PUBLICATION_MODE') or 'private'
+mode=os.environ.get('PUBLICATION_MODE') or 'scheduled'
 if mode not in ('private','scheduled'):raise SystemExit('PUBLICATION_MODE must be private or scheduled')
 c['mode']=mode
 c['require_review']=False
+c['speech_provider']=os.environ.get('SPEECH_PROVIDER') or 'openai'
+if c['speech_provider'] not in ('openai','edge'):raise SystemExit('음성 제공자 설정을 확인하세요.')
 (root/'config.json').write_text(json.dumps(c,ensure_ascii=False),encoding='utf-8')
-print('연결 설정 완료. 기본 비공개 업로드. 토큰 내용은 출력하지 않습니다.')
+print('연결 설정 완료. 공개 설정:',mode,'음성:',c['speech_provider'],'토큰 내용은 출력하지 않습니다.')

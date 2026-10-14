@@ -97,6 +97,9 @@ class Store:
         except Exception:
             self.db.rollback()
             raise
+        if os.environ.get('SHORTS_CHECKPOINT') == '1':
+            import subprocess, sys
+            subprocess.run([sys.executable,str(ROOT/'scripts/checkpoint.py')],check=True)
 
 @contextlib.contextmanager
 def run_lock():

@@ -24,6 +24,9 @@ def load_catalog():
     return entries
 
 def run_daily(c,store,skip_collect=False):
+    if c.get('content_mode')=='popularity':
+        from popularity import run_popularity
+        return run_popularity(c,store)
     day=now().date().isoformat()
     if skip_collect:
         videos=json.loads((ROOT/'data/candidates.json').read_text(encoding='utf-8'))['videos']
@@ -83,13 +86,30 @@ def upload_ready(c,store):
         print('확인되지 않은 업로드가 있어 중단합니다. reconcile을 실행하세요.',flush=True);return
     yt,_=service()
     for i,job in enumerate(ready,uploaded_today):
+        script=json.loads(job['script']) if job.get('script') else {}
+        if '_ranking' in script:
+            updated=dt.datetime.fromisoformat(script['_ranking']['source_updated_at'])
+            if (now()-updated).total_seconds()>c.get('ranking_max_age_hours',24)*3600:
+                store.update(job['id'],status='rank_stale',error='순위가 오래되어 게시하지 않았습니다.')
+                continue
         if not job.get('video') or not (ROOT/job['video']).is_file():
             if os.environ.get('SHORTS_CHECKPOINT')!='1':
                 raise RuntimeError('완성 영상이 없습니다. 제작 파일을 복원하세요.')
-            brief=next(b for b in load_catalog() if b['id']==job['brief_id'])
-            path,_=render(c,store,job['id'],json.loads(job['script']),brief)
+            script=json.loads(job['script'])
+            if '_ranking' in script:
+                from editorial import render_ranking
+                path,_=render_ranking(c,store,job['id'],script['_ranking'],script)
+            else:
+                brief=next(b for b in load_catalog() if b['id']==job['brief_id'])
+                path,_=render(c,store,job['id'],script,brief)
             store.update(job['id'],video=path)
             job=store.get(job['id'])
+        script=json.loads(job['script']) if job.get('script') else {}
+        if '_ranking' in script:
+            updated=dt.datetime.fromisoformat(script['_ranking']['source_updated_at'])
+            if (now()-updated).total_seconds()>c.get('ranking_max_age_hours',24)*3600:
+                store.update(job['id'],status='rank_stale',error='순위가 오래되어 게시하지 않았습니다.')
+                continue
         with store.db: store.db.execute('INSERT OR IGNORE INTO upload_events VALUES(?,?,?)',(job['id'],day,now().isoformat()))
         upload(c,store,job,i,yt)
         print('업로드 완료:',job['id'],flush=True)
@@ -113,6 +133,15 @@ def demo(c,store):
     path,sec=render(c,store,'demo',DEMO_SCRIPT,load_catalog()[0],demo=True)
     save_json(ROOT/'output/demo/script.json',DEMO_SCRIPT)
     print('화면 샘플 생성:',path,sec,'초 · 내레이션 없음 · 업로드 대상 아님')
+
+def ranking_preview(c,store):
+    from popularity import collect_category,make_script
+    from editorial import render_ranking
+    snapshot=collect_category(c,c['ranking_categories'][0])
+    script=make_script(snapshot)
+    path,sec=render_ranking(c,store,'ranking_preview',snapshot,script)
+    save_json(ROOT/'output/ranking_preview/provenance.json',snapshot)
+    print('인기순위 미리보기:',path,sec,'초. 채널 업로드하지 않았습니다.')
 
 def export(store):
     path=ROOT/'data/performance.csv'
@@ -234,7 +263,7 @@ def dashboard(c,port):
             sample='<video controls preload="metadata" src="/video/demo/short.mp4"></video>' if (ROOT/'output/demo/short.mp4').exists() else ''
             content=f'''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>쇼츠 스튜디오</title>
             <style>body{{background:#0b1424;color:#eaf0ff;font:16px system-ui;margin:0}}main{{max-width:1120px;margin:auto;padding:28px}}h1{{font-size:36px}}h2{{font-size:22px}}small,.muted{{color:#a7bdd4}}.badge{{color:#60ecc4}}button{{background:#63e7c0;border:0;padding:13px 19px;border-radius:10px;font-weight:bold;cursor:pointer}}.buttons{{display:flex;gap:12px;flex-wrap:wrap}}article{{display:flex;gap:24px;background:#172339;padding:22px;border-radius:18px;margin:22px 0}}video{{width:190px;max-height:340px;border-radius:14px}}article>div{{flex:1}}p{{line-height:1.7}}a{{color:#a3d1ff}}.error{{color:#ffb7b7}}input{{display:block;max-width:130px;background:#243854;color:white;border:1px solid #3e5774;border-radius:6px;padding:8px}}.finance{{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-top:20px}}label{{font-size:12px}}table{{width:100%;border-collapse:collapse}}td,th{{text-align:left;padding:12px;border-bottom:1px solid #29405f}}pre{{white-space:pre-wrap;background:#172339;padding:15px}}@media(max-width:650px){{article{{display:block}}video{{width:100%;max-height:480px}}h1{{font-size:28px}}}}</style>
-            <main><small>ORIGINAL SHORTS WORKFLOW</small><h1>직장인의 쇼츠 스튜디오</h1><p class="badge">후보 50개 분석 → 하루 {c['daily_videos']}개 새 영상 → {'비공개 업로드' if c['mode']=='private' else '예약 공개'} → 성과 기록</p>
+            <main><small>ORIGINAL SHORTS WORKFLOW</small><h1>직장인의 쇼츠 스튜디오</h1><p class="badge">{'실제 상품 인기순위 수집' if c.get('content_mode')=='popularity' else '유튜브 후보 50개 분석'} → 하루 최대 {c['daily_videos']}개 새 영상 → {'비공개 업로드' if c['mode']=='private' else '예약 공개'} → 성과 기록</p>
             <p>채널: {esc(c['channel_name'])} · 검토 {'사용' if c['require_review'] else '생략'} · {'작업 실행 중' if running else '대기 중'}</p>
             <p class="muted">업로드 전 영상·사실·사용 권리를 확인하세요. 상품 태그와 관련 영상은 유튜브 스튜디오에서 연결합니다. 광고수익·구매 전환은 수동 입력입니다.</p>
             <div class="buttons">{buttons}</div><h2>제작 목록</h2>{cards or '<p>오늘 영상 제작을 누르세요. API 연결 전에는 아래 화면 샘플을 확인할 수 있습니다.</p>'}
@@ -280,7 +309,7 @@ def dashboard(c,port):
 
 def main():
     parser=argparse.ArgumentParser(description='원본 쇼츠 제작·예약 업로드 프로그램')
-    parser.add_argument('command',choices=['doctor','demo','login','collect','run','upload','metrics','export','weekly','reconcile','dashboard','daemon'])
+    parser.add_argument('command',choices=['doctor','demo','ranking-preview','login','collect','run','upload','metrics','export','weekly','reconcile','dashboard','daemon'])
     parser.add_argument('--port',type=int,default=8765)
     parser.add_argument('--skip-collect',action='store_true')
     args=parser.parse_args();c=config();s=init_store()
@@ -302,6 +331,7 @@ def main():
         with run_lock():
             if args.command=='doctor':doctor(c)
             elif args.command=='demo':demo(c,s)
+            elif args.command=='ranking-preview':ranking_preview(c,s)
             elif args.command=='collect':collect(c)
             elif args.command=='run':run_daily(c,s,args.skip_collect)
             elif args.command=='upload':upload_ready(c,s)

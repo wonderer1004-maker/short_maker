@@ -36,9 +36,19 @@ def service(login=False):
 
 def metadata(c,job,index):
     script=json.loads(job['script'])
-    desc='직접 작성한 구매 체크리스트입니다. 특정 제품의 실험·순위를 주장하지 않습니다.\nAI 합성 음성을 사용했습니다.\n'
+    if '_ranking' in script:
+        snap=script['_ranking']
+        desc=(f'{snap["source"]} / {snap["category"]}\n순위 갱신: {snap["source_updated_at"]}\n'
+              f'확인: {snap["collected_at"]}\n{snap["methodology"]}\n{snap["scope"]}\n'
+              f'{snap["price_basis"]}. 가격·재고는 구매 전에 다시 확인하세요.\n'
+              '브랜드·판매처 상품 자료 사진과 AI 합성 음성을 사용했습니다. 직접 착용·보온성 실험 결과가 아닙니다.\n'
+              '순위 출처: '+snap['source_page']+'\n')
+        for p in snap['products']:
+            desc+=f'{p["rank"]}위 {p["brand"]} / {p["name"]} / {p["price"]:,}원\n{p["url"]}\n'
+    else:
+        desc='직접 작성한 구매 체크리스트입니다. 특정 제품의 실험·순위를 주장하지 않습니다.\nAI 합성 음성을 사용했습니다.\n'
     if c.get('affiliate_disclosure'): desc+=c['affiliate_disclosure']+'\n'
-    desc+=c['channel_profile_cta']+f'\n\n제작 식별자: shorts-studio:{job["id"]}\n#쇼츠 #구매체크리스트'
+    desc+=c['channel_profile_cta']+f'\n\n제작 식별자: shorts-studio:{job["id"]}\n#쇼츠 #상품비교'
     status={'privacyStatus':'private','selfDeclaredMadeForKids':c['made_for_kids'],
             'containsSyntheticMedia':c['contains_synthetic_media']}
     if c['mode']=='scheduled':

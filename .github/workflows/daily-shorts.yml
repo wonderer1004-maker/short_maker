@@ -3,6 +3,15 @@ on:
   schedule:
     - cron: '17 22 * * *'
   workflow_dispatch:
+    inputs:
+      operation:
+        description: '실행할 작업'
+        type: choice
+        default: run
+        options:
+          - run
+          - reconcile
+          - metrics
 permissions:
   contents: write
 concurrency:
@@ -32,6 +41,7 @@ jobs:
           YOUTUBE_TOKEN_JSON: ${{ secrets.YOUTUBE_TOKEN_JSON }}
           YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
           PUBLICATION_MODE: ${{ vars.PUBLICATION_MODE }}
+          SPEECH_PROVIDER: ${{ vars.SPEECH_PROVIDER }}
         run: python scripts/github_setup.py
       - name: Configure durable checkpoints
         run: |
@@ -42,7 +52,8 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SHORTS_CHECKPOINT: '1'
-        run: python app.py run
+          OPERATION: ${{ github.event.inputs.operation || 'run' }}
+        run: python scripts/github_run.py
       - name: Save final state
         if: always()
         run: python scripts/checkpoint.py

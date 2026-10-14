@@ -15,6 +15,7 @@ class WorkflowTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory()
         self.store=Store(Path(self.tmp.name)/'db.sqlite3')
         self.c=config()
+        self.c['content_mode']='checklist'
     def tearDown(self):
         self.store.db.close();self.tmp.cleanup()
     def test_source_is_never_added_twice_even_next_day(self):

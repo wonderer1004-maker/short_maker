@@ -1,5 +1,12 @@
 {
   "channel_name": "직장인의 현명한 선택",
+  "content_mode": "popularity",
+  "ranking_categories": ["경량 패딩/패딩 베스트", "플리스/뽀글이", "니트/스웨터"],
+  "ranking_max_age_hours": 24,
+  "skip_unchanged_rankings": true,
+  "speech_provider": "openai",
+  "speech_speed": 1.12,
+  "edge_voice": "ko-KR-SunHiNeural",
   "queries": ["경량패딩 비교", "러닝 용품 비교", "출퇴근 의류 추천"],
   "region": "KR",
   "lookback_days": 30,

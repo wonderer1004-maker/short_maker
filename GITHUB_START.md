@@ -1,5 +1,18 @@
 # GitHub에서 실행하기
 
+## V3 변경 사항 — 아래 구버전 안내보다 우선
+
+- 기본 제작은 무신사의 카테고리 상품 인기순위 TOP 5입니다. 가격순 샘플의 브랜드를 고정하지 않습니다.
+- PUBLICATION_MODE 미등록 기본값은 **scheduled(예약 공개)**로 변경되었습니다. 첫 테스트 때는 Variables에 PUBLICATION_MODE=private를 등록하세요.
+- SPEECH_PROVIDER 기본값은 openai입니다. OpenAI 키는 설명 음성 생성에 사용합니다. edge를 선택할 수도 있지만 서비스 변경으로 중단될 수 있습니다.
+- YOUTUBE_API_KEY는 과거 주제 분석용이며 상품 인기순위 수집에는 필요하지 않습니다.
+- 하루 최대 3편이고 동일한 순위·제품·가격의 영상은 다시 만들지 않습니다.
+- 경량패딩/베스트·플리스·니트의 실제 순위 번호, 출처, 갱신 시각을 표시합니다.
+- Actions → Run workflow → operation에서 run / reconcile / metrics를 선택할 수 있습니다.
+- 공개 운용 시 상품 이미지 사용 권리와 제휴·협찬 표시를 확인하세요.
+
+최신 안내는 README.md를 따르세요.
+
 이 폴더의 내용물을 비공개 GitHub 저장소의 최상위에 올립니다. `.github/workflows/daily-shorts.yml`을 포함해야 합니다. shorts_studio 폴더 아래에 중첩해 올리지 마세요.
 
 1. GitHub에서 새 **Private** 저장소를 만듭니다.

@@ -108,7 +108,7 @@ def speech(text,path,c,store):
     if not key: raise RuntimeError('OPENAI_API_KEY가 없습니다.')
     req=urllib.request.Request('https://api.openai.com/v1/audio/speech',
          data=json.dumps({'model':c['speech_model'],'voice':c['voice'],
-                          'input':text,'response_format':'mp3'}).encode(),
+                          'input':text,'response_format':'mp3','speed':c.get('speech_speed',1.12)}).encode(),
          headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'})
     with urllib.request.urlopen(req,timeout=120) as r: body=r.read()
     tmp=path.with_suffix('.tmp');tmp.write_bytes(body);tmp.replace(path)
