@@ -28,13 +28,13 @@
 | ALI_TRACKING_ID | 알리 Affiliate 추적 ID |
 | RENDER_DEPLOY_HOOK | Render 상품 사이트 Settings의 Deploy Hook URL |
 
-4. Render에서 이 저장소의 정적 사이트를 연결합니다. `render.yaml`로 배포하면 **site/**만 공개하며 코드·DB·토큰은 공개 디렉터리에 포함하지 않습니다. GitHub가 Private이면 Render GitHub 앱에 저장소 접근 권한을 유지하세요. Render 자동 배포는 끕니다. 상품 페이지를 갱신한 뒤 Deploy Hook으로만 배포하므로 작업 상태 저장마다 재배포되지 않습니다. Render 사이트 Settings → Deploy Hook 주소를 GitHub RENDER_DEPLOY_HOOK Secret에 등록하세요. 정적 사이트는 Render 무료 옵션을 사용하지만 계정별 사용량 제한이 적용됩니다.
+4. Render 상품 페이지는 https://short-maker-products.onrender.com 에 연결했습니다. 관리 화면: https://dashboard.render.com/static/srv-db7dk6dg1s2s73a4lcs0 . 다른 환경에서 사용할 때에는 Render에서 이 저장소의 정적 사이트를 연결합니다. `render.yaml`로 배포하면 **site/**만 공개하며 코드·DB·토큰은 공개 디렉터리에 포함하지 않습니다. GitHub가 Private이면 Render GitHub 앱에 저장소 접근 권한을 유지하세요. Render 자동 배포는 끕니다. 상품 페이지를 갱신한 뒤 Deploy Hook으로만 배포하므로 작업 상태 저장마다 재배포되지 않습니다. Render 사이트 Settings → Deploy Hook 주소를 GitHub RENDER_DEPLOY_HOOK Secret에 등록하세요. 정적 사이트는 Render 무료 옵션을 사용하지만 계정별 사용량 제한이 적용됩니다.
 5. Actions → Variables를 아래와 같이 설정합니다.
 
 | Variable | 값 |
 |---|---|
 | CONTENT_MODE | affiliate (GitHub 기본값) |
-| AFFILIATE_PORTAL_URL | Render의 실제 https://…onrender.com 주소 |
+| AFFILIATE_PORTAL_URL | 선택 사항. 기본값 https://short-maker-products.onrender.com . 다른 사이트로 옮길 때 설정 |
 | PUBLICATION_MODE | 최초 테스트는 private, 검토 후 scheduled |
 | AFFILIATE_CONFIG_JSON | 선택 사항. affiliate.config.example.json의 affiliate_platforms를 포함하는 JSON. 카테고리·검색어·동종 비교 규칙을 변경할 때 사용 |
 

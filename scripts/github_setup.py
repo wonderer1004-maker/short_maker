@@ -16,7 +16,7 @@ if (os.environ.get('CONTENT_MODE') or 'affiliate')=='affiliate':
     if os.environ.get('AFFILIATE_CONFIG_JSON'):
         supplied=json.loads(os.environ['AFFILIATE_CONFIG_JSON'])
         c['affiliate_platforms']=supplied['affiliate_platforms']
-    c['affiliate_portal_url']=os.environ.get('AFFILIATE_PORTAL_URL','')
+    c['affiliate_portal_url']=os.environ.get('AFFILIATE_PORTAL_URL') or c['affiliate_portal_url']
 mode=os.environ.get('PUBLICATION_MODE') or 'scheduled'
 if mode not in ('private','scheduled'):raise SystemExit('PUBLICATION_MODE must be private or scheduled')
 c['mode']=mode

@@ -225,6 +225,10 @@ def verify_portal(c,script):
 def run_affiliate(c,store):
     from comparison_render import render_comparison
     from app import upload_ready
+    if c.get('speech_provider','openai')=='openai':required('OPENAI_API_KEY')
+    if not c['require_review']:
+        safe_url(required('RENDER_DEPLOY_HOOK'),['api.render.com'])
+        safe_url(c.get('affiliate_portal_url',''),['onrender.com'])
     snapshots=[];errors=[];day=now().date().isoformat()
     for platform,pc in c['affiliate_platforms'].items():
         if not pc.get('enabled'):continue

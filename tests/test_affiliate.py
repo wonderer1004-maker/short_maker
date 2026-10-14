@@ -67,5 +67,23 @@ class AffiliateTests(unittest.TestCase):
     def test_ali_cannot_silently_convert_dollars(self):
         raw={'product_id':1,'product_title':'mouse','target_sale_price':'10','target_sale_price_currency':'USD','product_main_image_url':'https://ae01.alicdn.com/a.jpg','product_detail_url':'https://www.aliexpress.com/item/1.html','promotion_link':'https://s.click.aliexpress.com/e/a','lastest_volume':3,'second_level_category_id':1}
         with self.assertRaises(ValueError):a.AliExpress().normalize(raw)
+    def test_portal_must_match_exact_snapshot_before_upload(self):
+        snap={'pairs':[{'popular':product(),'alternative':product(2)}]}
+        import io
+        with patch.object(a.ur,'urlopen',return_value=io.BytesIO(b'old page')):
+            with self.assertRaises(RuntimeError):a.verify_portal({'affiliate_portal_url':'https://test.onrender.com'},{'_affiliate':snap})
+    def test_workflow_creates_six_jobs_and_rerun_reuses_ready_videos(self):
+        import comparison_render
+        import app
+        from core import Store,config
+        snap={'platform':'coupang','source':'쿠팡','scope':'범위','collected_at':a.now().isoformat(),'methodology':'order','disclosure':a.DISCLOSURE,'pairs':[{'rank':i,'popular':product(i),'alternative':product(i+20,'무선 마우스 모델 B'),'type':'무선 마우스'} for i in range(1,11)]}
+        with tempfile.TemporaryDirectory() as tmp:
+            store=Store(Path(tmp)/'db.sqlite3');c=config();c.update(content_mode='affiliate',require_review=True,speech_provider='edge',affiliate_platforms={'coupang':{'enabled':True},'aliexpress':{'enabled':True}})
+            def collect(platform,pc):return {**copy.deepcopy(snap),'platform':platform}
+            with patch.object(a,'ROOT',Path(tmp)),patch.object(a,'collect',side_effect=collect),patch.object(comparison_render,'render_comparison',return_value=('output/demo.mp4',55)) as renderer,patch.object(app,'upload_ready'):
+                a.run_affiliate(c,store);a.run_affiliate(c,store)
+            self.assertEqual(len(store.rows()),6);self.assertEqual(renderer.call_count,6)
+            self.assertTrue(all(j['status']=='review' for j in store.rows()))
+            store.db.close()
 
 if __name__=='__main__':unittest.main()
